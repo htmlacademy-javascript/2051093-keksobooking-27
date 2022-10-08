@@ -1,4 +1,6 @@
 import { createRentAdverts } from './data.js';
+import { getRoomsName, getGuestsName } from './util.js';
+
 
 const map = document.querySelector('.map__canvas');
 const mapFragment = document.createDocumentFragment();
@@ -21,7 +23,7 @@ rentAdverts.forEach(({offer, author}) => {
   rentAdvertElement.querySelector('.popup__text--address').textContent = offer.address;
   rentAdvertElement.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
   rentAdvertElement.querySelector('.popup__type').textContent = typeRules[offer.type];
-  rentAdvertElement.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
+  rentAdvertElement.querySelector('.popup__text--capacity').textContent = `${offer.rooms} ${getRoomsName(offer.rooms)} для ${offer.guests} ${getGuestsName(offer.guests)}`;
   rentAdvertElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
 
   const featuresContainer = rentAdvertElement.querySelector('.popup__features');
