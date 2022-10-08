@@ -8,43 +8,43 @@ const getAvatarIndex = () => {
 
 const roomTypes = ['palace', 'flat', 'house', 'bungalow', 'hotel'];
 const time = ['12:00', '13:00', '14:00'];
-const featuresItems = ['palace', 'flat', 'house', 'bungalow', 'hotel'];
+const featuresItems = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 const photosItems = ['https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/duonguyen-8LrGtIxxa4w.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',];
 
 const createRentAdvert = () => {
 
-  const AUTHOR = {
+  const author = {
     avatar: `img/avatars/user${getAvatarIndex()}.png`,
   };
 
-  const LOCATION = {
+  const location = {
     lat: getRandomIndexFraction(35.65000, 35.70000, 5), //число с плавающей точкой — широта, случайное значение от 35.65000 до 35.70000
     lng: getRandomIndexFraction(139.70000, 139.80000, 5), //число с плавающей точкой — долгота, случайное значение от 139.70000 до 139.80000
   };
 
-  const OFFER = {
-    title: '',
-    address: `${LOCATION.lat}, ${LOCATION.lng}`,
+  const offer = {
+    title: 'Уютное бунгало для семьи',
+    address: `${location.lat}, ${location.lng}`,
     price: getRandomIndex(1000, 10000), //random number
     type: roomTypes[getRandomIndex(0, roomTypes.length - 1)], //fix (palace, flat, house, bungalow, hotel),
-    rooms: getRandomIndex(0, 10), //random number
-    guests: getRandomIndex(0, 10), //random number
+    rooms: getRandomIndex(1, 10), //random number
+    guests: getRandomIndex(1, 10), //random number
     checkin: time[getRandomIndex(0, time.length - 1)],//fix (12:00, 13:00, 14:00),
     checkout: time[getRandomIndex(0, time.length - 1)], // fix (12:00, 13:00, 14:00),
     features: getRandomArray(featuresItems), // массив случайной длины из значений: (wifi, dishwasher, parking, washer, elevator, conditioner),
-    description: '',
+    description: '3 комнаты для семьи',
     photos: getRandomArray(photosItems),
   };
 
   return {
-    AUTHOR,
-    LOCATION,
-    OFFER,
+    author,
+    location,
+    offer,
   };
 };
 
-const createRentAdverts = Array.from({length: 10}, createRentAdvert);
+const createRentAdverts = () => Array.from({length: 1}, createRentAdvert);
 
 export {createRentAdverts};
