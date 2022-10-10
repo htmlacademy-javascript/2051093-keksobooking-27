@@ -25,4 +25,26 @@ const getRandomArray = (elements) => {
   return itemIndexes;
 };
 
-export {getRandomIndex, getRandomIndexFraction, getRandomArray};
+const getRoomsName = (rooms) => {
+  switch (rooms) {
+    case 1:
+      return 'комната';
+    case 2:
+    case 3:
+    case 4:
+      return 'комнаты';
+    default:
+      return 'комнат';
+  }
+};
+
+const getGuestsName = (guests) => {
+  switch (guests) {
+    case 1:
+      return 'гостя';
+    default:
+      return 'гостей';
+  }
+};
+
+export {getRandomIndex, getRandomIndexFraction, getRandomArray, getRoomsName, getGuestsName};
