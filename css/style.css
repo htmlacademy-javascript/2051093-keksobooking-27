@@ -673,6 +673,7 @@ fieldset {
 }
 
 .ad-form__element--invalid .text-help {
+  display: block;
   color: red;
   font-size: 12px;
   padding: 4px;
