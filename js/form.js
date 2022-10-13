@@ -89,10 +89,8 @@ typeField.addEventListener('change', () => {
 // Валидация въезд-выезд
 const timeIn = adForm.querySelector('#timein');
 const timeOut = adForm.querySelector('#timeout');
-const time = adForm.querySelector('.ad-form__element--time select');
 
-
-time.addEventListener('change', () => {
+timeIn.addEventListener('change', () => {
   timeOut.value = timeIn.value;
 });
 
