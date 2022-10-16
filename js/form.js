@@ -32,7 +32,9 @@ const pristine = new Pristine(adForm, {
 });
 
 //Валидация заголовка
-const validateTitle = (value) => value.length >= 30 && value.length <= 100;
+const minLength = 30;
+const maxLength = 100;
+const validateTitle = (value) => value.length >= minLength && value.length <= maxLength;
 
 pristine.addValidator(
   adForm.querySelector('#title'),
@@ -43,15 +45,10 @@ pristine.addValidator(
 // Валидация комнат и гостей
 const guestsField = adForm.querySelector('#capacity');
 const roomsField = adForm.querySelector('#room_number');
+const guestMinAmount = 0;
+const roomMaxAmount = 3;
 
-const validateCapacity = () => {
-  if (roomsField.value >= guestsField.value && guestsField.value > 0 && roomsField.value <= 3) {
-    return true;
-  }
-  if (roomsField.value === '100' && guestsField.value === '0') {
-    return true;
-  }
-};
+const validateCapacity = () => (roomsField.value >= guestsField.value && guestsField.value > guestMinAmount && roomsField.value <= roomMaxAmount) || (roomsField.value === '100' && guestsField.value === '0');
 
 pristine.addValidator(
   guestsField,
