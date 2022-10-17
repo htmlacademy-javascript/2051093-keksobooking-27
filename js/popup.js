@@ -9,11 +9,6 @@ const rentAdvertTemplate = document.querySelector('#card').content.querySelector
 const rentAdverts = createRentAdverts();
 
 const typeRules = {
-  'flat': 'Квартира',
-  'bungalow': 'Бунгало',
-  'house': 'Дом',
-  'palace': 'Дворец',
-  'hotel': 'Отель',
 };
 
 rentAdverts.forEach(({offer, author}) => {
