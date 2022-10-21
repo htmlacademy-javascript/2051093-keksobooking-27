@@ -13,6 +13,11 @@ const photosItems = ['https://assets.htmlacademy.ru/content/intensive/javascript
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',];
 
+const pricePerNight = {
+  min: 0,
+  max: 100000,
+};
+
 const createRentAdvert = () => {
 
   const author = {
@@ -27,7 +32,7 @@ const createRentAdvert = () => {
   const offer = {
     title: 'Уютное бунгало для семьи',
     address: `${location.lat}, ${location.lng}`,
-    price: getRandomIndex(1000, 10000), //random number
+    price: getRandomIndex(pricePerNight.min, pricePerNight.max), //random number
     type: roomTypes[getRandomIndex(0, roomTypes.length - 1)], //fix (palace, flat, house, bungalow, hotel),
     rooms: getRandomIndex(1, 10), //random number
     guests: getRandomIndex(1, 10), //random number
@@ -45,6 +50,7 @@ const createRentAdvert = () => {
   };
 };
 
-const createRentAdverts = () => Array.from({length: 1}, createRentAdvert);
+const numberOfAdverts = 10;
+const createRentAdverts = () => Array.from({length: numberOfAdverts}, createRentAdvert);
 
-export {createRentAdverts};
+export {createRentAdverts, pricePerNight};
