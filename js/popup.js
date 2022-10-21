@@ -1,21 +1,20 @@
-import { createRentAdverts } from './data.js';
 import { getRoomsName, getGuestsName } from './util.js';
 
-
-const map = document.querySelector('.map__canvas');
-const mapFragment = document.createDocumentFragment();
-const rentAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
-
-const rentAdverts = createRentAdverts();
-
 const typeRules = {
+  'flat': 'Квартира',
+  'bungalow': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец',
+  'hotel': 'Отель',
 };
 
-rentAdverts.forEach(({offer, author}) => {
+const createCustomPopup = ({author,offer}) => {
+  const rentAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
   const rentAdvertElement = rentAdvertTemplate.cloneNode(true);
+
   rentAdvertElement.querySelector('.popup__avatar').src = author.avatar;
   rentAdvertElement.querySelector('.popup__title').textContent = offer.title;
-  rentAdvertElement.querySelector('.popup__text--address').textContent = offer.address;
+  rentAdvertElement.querySelector('.popup__text--address').textContent = `Коордтнаты: ${offer.address}`;
   rentAdvertElement.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
   rentAdvertElement.querySelector('.popup__type').textContent = typeRules[offer.type];
   rentAdvertElement.querySelector('.popup__text--capacity').textContent = `${offer.rooms} ${getRoomsName(offer.rooms)} для ${offer.guests} ${getGuestsName(offer.guests)}`;
@@ -46,8 +45,7 @@ rentAdverts.forEach(({offer, author}) => {
     photoTemplate.remove();
   } else {photosContainer.remove();}
 
-  mapFragment.appendChild(rentAdvertElement);
-});
+  return rentAdvertElement;
+};
 
-map.appendChild(mapFragment);
-
+export {createCustomPopup};

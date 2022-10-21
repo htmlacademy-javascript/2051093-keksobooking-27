@@ -1,33 +1,10 @@
 const adForm = document.querySelector('.ad-form');
-const adFormElements = adForm.querySelectorAll('.ad-form__element');
-const mapFilters = document.querySelector('.map__filters');
-
-
-const getInactive = () => {
-  adFormElements.forEach((element) => {
-    element.setAttribute('disabled', 'disabled');
-  });
-  adForm.classList.add('ad-form--disabled');
-  mapFilters.classList.add('map__filters--disabled');
-};
-
-getInactive(document);
-
-const getActive = () => {
-  adFormElements.forEach((element) => {
-    element.removeAttribute('disabled');
-  });
-  adForm.classList.remove('ad-form--disabled');
-  mapFilters.classList.remove('map__filters--disabled');
-};
-
-getActive(document);
 
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
   errorClass: 'ad-form__element--invalid',
   errorTextParent: 'ad-form__element',
-  errorTextTag: 'span',
+  errorTextTag: 'div',
   errorTextClass: 'text-help',
 });
 
@@ -41,6 +18,9 @@ pristine.addValidator(
   validateTitle,
   'от 30 до 100 символов'
 );
+
+// Адрес
+const address = adForm.querySelector('#address');
 
 // Валидация комнат и гостей
 const guestsField = adForm.querySelector('#capacity');
@@ -99,3 +79,5 @@ adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   pristine.validate();
 });
+
+export {adForm, address, price};
