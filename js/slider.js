@@ -1,12 +1,16 @@
-import {pricePerNight} from './data.js';
 import { price } from './form.js';
 
 //global noUiSlider: readonly
 const sliderElement = document.querySelector('.ad-form__slider');
 
+const pricePerNight = {
+  min: 0,
+  max: 100000,
+};
+
 noUiSlider.create(sliderElement, {
   range: pricePerNight,
-  start: 0,
+  start: 1000,
   step: 100,
   connect: 'lower',
   format: {
@@ -24,3 +28,4 @@ sliderElement.noUiSlider.on('update', () => {
 });
 
 price.addEventListener('change', () => sliderElement.noUiSlider.set(price.value));
+

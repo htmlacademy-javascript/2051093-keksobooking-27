@@ -1,11 +1,8 @@
 import {getActiveState} from './activate-page.js';
-import {address, adForm} from './form.js';
+import {address} from './form.js';
 import {createCustomPopup} from './popup.js';
-import {createRentAdverts} from './data.js';
 
 const mapZoom = 13;
-const rentAdverts = createRentAdverts();
-const resetButton = document.querySelector('.ad-form__reset');
 const locationOfCenter = {
   lat: 35.68950,
   lng: 139.73171,
@@ -59,31 +56,30 @@ mainPinMarker.on('moveend', (evt) => {
   address.value = getMarkerLocation(evt.target.getLatLng());
 });
 
-resetButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  adForm.reset();
-
-  mainPinMarker.setLatLng(locationOfMainMarker);
-  address.value = `${locationOfMainMarker.lat} ${locationOfMainMarker.lng}`;
-});
-
 const icon = L.icon({
   iconUrl: './img/pin.svg',
   iconSize: [40, 40],
   iconAnchor: [20, 40],
 });
 
-const createMarker = (rentAdvert) => {
-  const marker = L.marker(
-    rentAdvert.location,
-    {
-      icon,
-    },
-  );
-
-  marker
-    .addTo(map)
-    .bindPopup(createCustomPopup(rentAdvert));
+const createMarkers = (rentAdverts) => {
+  rentAdverts.forEach((rentAdvert) => {
+    const marker = L.marker(
+      rentAdvert.location,
+      {
+        icon,
+      },
+    );
+    marker
+      .addTo(map)
+      .bindPopup(createCustomPopup(rentAdvert));
+  });
 };
 
-rentAdverts.forEach((rentAdvert) => createMarker(rentAdvert));
+const resetMap = () => {
+  mainPinMarker.setLatLng(L.latLng(locationOfMainMarker.lat, locationOfMainMarker.lng));
+  address.value = `${locationOfMainMarker.lat} ${locationOfMainMarker.lng}`;
+  map.closePopup();
+};
+
+export {createMarkers, resetMap};
