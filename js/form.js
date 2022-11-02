@@ -1,4 +1,4 @@
-import { sendData } from './data-base.js';
+import { requestData} from './data-base.js';
 import { resetMap } from './map.js';
 
 const adForm = document.querySelector('.ad-form');
@@ -94,9 +94,6 @@ timeOut.addEventListener('change', () => {
 });
 
 
-//  При успешной отправке формы или её очистке (нажатие на кнопку .ad-form__reset) страница, не перезагружаясь, переходит в состояние, когда:
-//- если на карте был показан балун, то он должен быть скрыт.
-
 const resetButton = adForm.querySelector('.ad-form__reset');
 
 resetButton.addEventListener('click', (evt) => {
@@ -152,7 +149,7 @@ adForm.addEventListener('submit', (evt) => {
   if (pristine.validate()) {
     blockSubmitButton();
     const formData = new FormData(evt.target);
-    sendData(sendFormSuccess, sendFormError, formData);
+    requestData(sendFormSuccess, sendFormError, 'POST',formData);
   }
 });
 

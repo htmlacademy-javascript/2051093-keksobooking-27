@@ -1,29 +1,22 @@
-const getData = (onSuccess) => {
-  fetch('https://27.javascript.pages.academy/keksobooking/data')
-    .then((response) => response.json())
-    .then((rentAdverts) => {
-      onSuccess(rentAdverts);
-    });
+const Urls = {
+  GET : 'https://27.javascript.pages.academy/keksobooking/data',
+  POST : 'https://27.javascript.pages.academy/keksobooking',
 };
 
-const sendData = (onSuccess, onFail, formData) => {
+const requestData = (onSuccess, onError, method, body) => {
   fetch(
-    'https://27.javascript.pages.academy/keksobooking',
+    Urls[method],
     {
-      method: 'POST',
-      body: formData,
-    },
+      method: method,
+      body,
+    }
   )
-    .then((response) => {
-      if (response.ok) {
-        onSuccess();
-      } else {
-        onFail('Не удалось отправить форму. Попробуйте ещё раз');
-      }
-    })
-    .catch(() => {
-      onFail('Не удалось отправить форму. Попробуйте ещё раз');
+    .then((response) => response.json())
+    .then((data) => {
+      onSuccess(data);
+    }).catch(() => {
+      onError();
     });
 };
 
-export {getData, sendData};
+export {requestData};
