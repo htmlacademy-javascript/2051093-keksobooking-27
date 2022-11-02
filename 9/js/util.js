@@ -1,28 +1,22 @@
-const getRandomIndex = (min, max) => {
-  if (min < 0 || max < 0) {
-    return -1;
-  }
-  return Math.round(Math.random() * (max - min) + min);
-};
+const showAlert = (message, timer) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = '100';
+  alertContainer.style.position = 'absolute';
+  alertContainer.style.left = '0';
+  alertContainer.style.top = '0';
+  alertContainer.style.right = '0';
+  alertContainer.style.padding = '3px 3px';
+  alertContainer.style.fontSize = '15px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = 'red';
 
-const getRandomIndexFraction = (min, max, digits = 1) => {
-  if (min < 0 || max < 0) {
-    return -1;
-  }
-  const result = Math.random() * (max - min) + min;
-  return + result.toFixed(digits);
-};
+  alertContainer.textContent = message;
 
-const getRandomArray = (elements) => {
-  const itemIndexes = [];
-  const length = getRandomIndex(0, elements.length - 1);
-  while (itemIndexes.length < length) {
-    const element = elements[getRandomIndex(0, elements.length - 1)];
-    if (!itemIndexes.includes(element)) {
-      itemIndexes.push(element);
-    }
-  }
-  return itemIndexes;
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, timer);
 };
 
 const getRoomsName = (rooms) => {
@@ -47,4 +41,5 @@ const getGuestsName = (guests) => {
   }
 };
 
-export {getRandomIndex, getRandomIndexFraction, getRandomArray, getRoomsName, getGuestsName};
+export {getRoomsName, getGuestsName, showAlert};
+
