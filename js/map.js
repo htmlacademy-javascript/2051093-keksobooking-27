@@ -1,4 +1,4 @@
-import {toggleActiveState} from './activate-page.js';
+import {mapFilters, toggleActiveState} from './activate-page.js';
 import {requestData} from './data-base.js';
 import {address} from './form.js';
 import {createCustomPopup} from './popup.js';
@@ -34,7 +34,7 @@ const map = L.map('map-canvas');
 
 const markerGroup = L.layerGroup().addTo(map);
 
-const numberOfAdverts = 10;
+const MAX_ADVERTS = 10;
 
 // Создаем слой с картой
 L.tileLayer(
@@ -89,11 +89,12 @@ const resetMap = () => {
 const onSuccess = (data) => {
   const rentAdverts = data.slice();
 
-  createMarkers(rentAdverts.slice(0, numberOfAdverts));
+  createMarkers(rentAdverts.slice(0, MAX_ADVERTS));
 };
 
 const onError = () => {
   showAlert(ALERT_MESSAGE, 2000);
+  mapFilters.classList.toggle('map__filters--disabled');
 };
 
 // Задаем координаты карты
