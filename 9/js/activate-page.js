@@ -1,7 +1,7 @@
 import {adForm} from './form.js';
 
 const mapFilters = document.querySelector('.map__filters');
-const disabledElements = adForm.querySelectorAll('select.map__filter', 'fieldset');
+const disabledElements = document.querySelectorAll('select.map__filter', 'fieldset');
 
 const setDisabledState = () => {
   disabledElements.forEach((item) => {
@@ -18,4 +18,4 @@ const toggleActiveState = () => {
 
 toggleActiveState();
 
-export {toggleActiveState};
+export {toggleActiveState, mapFilters};

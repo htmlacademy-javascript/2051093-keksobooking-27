@@ -40,7 +40,6 @@ const validateRooms = () => {
   const roomValue = roomField.value;
 
   guestField.forEach((guest) => {
-    // isDisabled присваетвается не найденому по соответствию значению
     const isDidabled = (numberOfGuests[roomValue].indexOf(guest.value) === -1);
     guest.selected = numberOfGuests[roomValue][0] === guest.value;
     guest.disabled = isDidabled;
@@ -102,52 +101,54 @@ resetButton.addEventListener('click', (evt) => {
   resetMap();
 });
 
-const blockSubmitButton = () => {
-  adForm.querySelector('.ad-form__submit').disabled = true;
-};
-const unblockSubmitButton = () => {
-  adForm.querySelector('.ad-form__submit').disabled = false;
-};
-
 const successTemlate = document.querySelector('#success').content.querySelector('.success');
 const successMessage = successTemlate.cloneNode(true);
 const body = document.querySelector('body');
 
+const onSuccessMessageClick = () => {
+  successMessage.remove();
+
+  document.removeEventListener('click', onSuccessMessageClick);
+};
+
+const onSuccessMessageKeydown = (evt) => {
+  if (evt.key === 'Escape') {successMessage.remove();}
+
+  document.removeEventListener('keydown', onSuccessMessageKeydown);
+};
+
 const sendFormSuccess = () => {
+  body.appendChild(successMessage);
+  document.addEventListener('click', onSuccessMessageClick);
+  document.addEventListener('keydown', onSuccessMessageKeydown);
   adForm.reset();
   resetMap();
-  unblockSubmitButton();
-  body.appendChild(successMessage);
-  document.addEventListener('click', () => {
-    successMessage.remove();
-  }, {once: true});
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {successMessage.remove();}
-  }, {once: true});
 };
 
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const errorMessage = errorTemplate.cloneNode(true);
-const errorButton = errorMessage.querySelector('.error__button');
+
+const onErrorMessageClick = () => {
+  errorMessage.remove();
+
+  document.removeEventListener('click', onErrorMessageClick);
+};
+
+const onErrorMessageKeydown = (evt) => {
+  if (evt.key === 'Escape') {errorMessage.remove();}
+
+  document.removeEventListener('keydown', onErrorMessageKeydown);
+};
 
 const sendFormError = () => {
-  unblockSubmitButton();
   body.appendChild(errorMessage);
-  document.addEventListener('click', () => {
-    errorMessage.remove();
-  }, {once: true});
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {errorMessage.remove();}
-  }, {once: true});
-  errorButton.addEventListener('click', () => {
-    errorMessage.remove();
-  });
+  document.addEventListener('click', onErrorMessageClick);
+  document.addEventListener('keydown', onErrorMessageKeydown);
 };
 
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
-    blockSubmitButton();
     const formData = new FormData(evt.target);
     requestData(sendFormSuccess, sendFormError, 'POST',formData);
   }
