@@ -1,11 +1,13 @@
-import {getActiveState} from './activate-page.js';
-import {address, adForm} from './form.js';
+import {mapFilters, toggleActiveState} from './activate-page.js';
+import {requestData} from './data-base.js';
+import {address} from './form.js';
 import {createCustomPopup} from './popup.js';
-import {createRentAdverts} from './data.js';
+import { showAlert } from './util.js';
 
-const mapZoom = 13;
-const rentAdverts = createRentAdverts();
-const resetButton = document.querySelector('.ad-form__reset');
+const MAP_ZOOM = 13;
+const LOCATION_DIGITS = 5;
+const ALERT_MESSAGE = 'Проблема доступа к серверу';
+
 const locationOfCenter = {
   lat: 35.68950,
   lng: 139.73171,
@@ -16,12 +18,23 @@ const locationOfMainMarker = {
   lng: 139.72700,
 };
 
-// Задаем координаты карты
-const map = L.map('map-canvas')
-  .on('load', () => {
-    getActiveState(true);
-  })
-  .setView (locationOfCenter, mapZoom);
+const mainPinIcon = L.icon({
+  iconUrl: './img/main-pin.svg',
+  iconSize: [52, 52],
+  iconAnchor: [26, 52],
+});
+
+const icon = L.icon({
+  iconUrl: './img/pin.svg',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
+
+const map = L.map('map-canvas');
+
+const markerGroup = L.layerGroup().addTo(map);
+
+const MAX_ADVERTS = 10;
 
 // Создаем слой с картой
 L.tileLayer(
@@ -32,12 +45,6 @@ L.tileLayer(
 ).addTo(map);
 
 // Добавляем метку
-const mainPinIcon = L.icon({
-  iconUrl: './img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
-});
-
 const mainPinMarker = L.marker(
   locationOfMainMarker,
   {
@@ -52,38 +59,49 @@ mainPinMarker.addTo(map);
 
 const getMarkerLocation = (location) => {
   const {lat, lng} = location;
-  return `${lat.toFixed(5)} ${lng.toFixed(5)}`;
+  return `${lat.toFixed(LOCATION_DIGITS)} ${lng.toFixed(LOCATION_DIGITS)}`;
 };
 
 mainPinMarker.on('moveend', (evt) => {
   address.value = getMarkerLocation(evt.target.getLatLng());
 });
 
-resetButton.addEventListener('click', (evt) => {
-  evt.preventDefault();
-  adForm.reset();
-
-  mainPinMarker.setLatLng(locationOfMainMarker);
-  address.value = `${locationOfMainMarker.lat} ${locationOfMainMarker.lng}`;
-});
-
-const icon = L.icon({
-  iconUrl: './img/pin.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-});
-
-const createMarker = (rentAdvert) => {
-  const marker = L.marker(
-    rentAdvert.location,
-    {
-      icon,
-    },
-  );
-
-  marker
-    .addTo(map)
-    .bindPopup(createCustomPopup(rentAdvert));
+const createMarkers = (rentAdverts) => {
+  rentAdverts.forEach((rentAdvert) => {
+    const marker = L.marker(
+      rentAdvert.location,
+      {
+        icon,
+      },
+    );
+    marker
+      .addTo(markerGroup)
+      .bindPopup(createCustomPopup(rentAdvert));
+  });
 };
 
-rentAdverts.forEach((rentAdvert) => createMarker(rentAdvert));
+const resetMap = () => {
+  mainPinMarker.setLatLng(L.latLng(locationOfMainMarker.lat, locationOfMainMarker.lng));
+  address.value = `${locationOfMainMarker.lat} ${locationOfMainMarker.lng}`;
+  map.closePopup();
+};
+
+const onSuccess = (data) => {
+  const rentAdverts = data.slice();
+
+  createMarkers(rentAdverts.slice(0, MAX_ADVERTS));
+};
+
+const onError = () => {
+  showAlert(ALERT_MESSAGE, 2000);
+  mapFilters.classList.toggle('map__filters--disabled');
+};
+
+// Задаем координаты карты
+map.on('load', () => {
+  toggleActiveState();
+  requestData(onSuccess, onError, 'GET');
+}).setView (locationOfCenter, MAP_ZOOM);
+
+
+export {createMarkers, resetMap};

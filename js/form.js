@@ -1,3 +1,6 @@
+import { requestData} from './data-base.js';
+import { resetMap } from './map.js';
+
 const adForm = document.querySelector('.ad-form');
 
 const pristine = new Pristine(adForm, {
@@ -23,18 +26,32 @@ pristine.addValidator(
 const address = adForm.querySelector('#address');
 
 // Валидация комнат и гостей
-const guestsField = adForm.querySelector('#capacity');
-const roomsField = adForm.querySelector('#room_number');
-const guestMinAmount = 0;
-const roomMaxAmount = 3;
+const guestField = adForm.querySelectorAll('#capacity option');
+const roomField = adForm.querySelector('#room_number');
 
-const validateCapacity = () => (roomsField.value >= guestsField.value && guestsField.value > guestMinAmount && roomsField.value <= roomMaxAmount) || (roomsField.value === '100' && guestsField.value === '0');
+const numberOfGuests = {
+  1: ['1'],
+  2: ['1', '2'],
+  3: ['1', '2', '3'],
+  100: ['0'],
+};
 
-pristine.addValidator(
-  guestsField,
-  validateCapacity,
-  'количество гостей не соответсвует количеству спальных мест'
-);
+const validateRooms = () => {
+  const roomValue = roomField.value;
+
+  guestField.forEach((guest) => {
+    const isDidabled = (numberOfGuests[roomValue].indexOf(guest.value) === -1);
+    guest.selected = numberOfGuests[roomValue][0] === guest.value;
+    guest.disabled = isDidabled;
+    guest.hidden = isDidabled;
+  });
+};
+
+validateRooms();
+
+const onRoomFieldChange = () => validateRooms();
+
+roomField.addEventListener('change', onRoomFieldChange);
 
 // Валидация цены
 const price = adForm.querySelector('#price');
@@ -75,9 +92,66 @@ timeOut.addEventListener('change', () => {
   timeIn.value = timeOut.value;
 });
 
+
+const resetButton = adForm.querySelector('.ad-form__reset');
+
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  adForm.reset();
+  resetMap();
+});
+
+const successTemlate = document.querySelector('#success').content.querySelector('.success');
+const successMessage = successTemlate.cloneNode(true);
+const body = document.querySelector('body');
+
+const onSuccessMessageClick = () => {
+  successMessage.remove();
+
+  document.removeEventListener('click', onSuccessMessageClick);
+};
+
+const onSuccessMessageKeydown = (evt) => {
+  if (evt.key === 'Escape') {successMessage.remove();}
+
+  document.removeEventListener('keydown', onSuccessMessageKeydown);
+};
+
+const sendFormSuccess = () => {
+  body.appendChild(successMessage);
+  document.addEventListener('click', onSuccessMessageClick);
+  document.addEventListener('keydown', onSuccessMessageKeydown);
+  adForm.reset();
+  resetMap();
+};
+
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorMessage = errorTemplate.cloneNode(true);
+
+const onErrorMessageClick = () => {
+  errorMessage.remove();
+
+  document.removeEventListener('click', onErrorMessageClick);
+};
+
+const onErrorMessageKeydown = (evt) => {
+  if (evt.key === 'Escape') {errorMessage.remove();}
+
+  document.removeEventListener('keydown', onErrorMessageKeydown);
+};
+
+const sendFormError = () => {
+  body.appendChild(errorMessage);
+  document.addEventListener('click', onErrorMessageClick);
+  document.addEventListener('keydown', onErrorMessageKeydown);
+};
+
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
-  pristine.validate();
+  if (pristine.validate()) {
+    const formData = new FormData(evt.target);
+    requestData(sendFormSuccess, sendFormError, 'POST',formData);
+  }
 });
 
 export {adForm, address, price};

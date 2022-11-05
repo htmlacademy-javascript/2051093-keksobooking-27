@@ -1,4 +1,4 @@
-import { getRoomsName, getGuestsName } from './util.js';
+import {getRoomsName, getGuestsName} from './util.js';
 
 const typeRules = {
   'flat': 'Квартира',
