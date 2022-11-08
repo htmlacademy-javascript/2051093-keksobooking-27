@@ -56,6 +56,12 @@ roomField.addEventListener('change', onRoomFieldChange);
 // Валидация цены
 const price = adForm.querySelector('#price');
 const typeField = adForm.querySelector('#type');
+const sliderElement = document.querySelector('.ad-form__slider');
+
+const pricePerNight = {
+  min: 0,
+  max: 100000,
+};
 
 const priceMinRules = {
   flat: 1000,
@@ -64,6 +70,21 @@ const priceMinRules = {
   palace: 10000,
   hotel: 3000,
 };
+
+noUiSlider.create(sliderElement, {
+  range: pricePerNight,
+  start: price.placeholder,
+  step: 100,
+  connect: 'lower',
+  format: {
+    to: function (value) {
+      return value.toFixed(0);
+    },
+    from: function (value) {
+      return parseFloat(value);
+    },
+  },
+});
 
 const validatePrice = () => price.value >= priceMinRules[typeField.value];
 
@@ -77,8 +98,22 @@ pristine.addValidator(
 
 typeField.addEventListener('change', () => {
   price.placeholder = priceMinRules[typeField.value];
+  sliderElement.noUiSlider.set(price.placeholder);
   pristine.validate(price);
 });
+
+sliderElement.noUiSlider.on('change', () => {
+  price.value = sliderElement.noUiSlider.get();
+});
+
+price.addEventListener('change', () => {
+  sliderElement.noUiSlider.set(price.value);
+});
+
+const resetSlider = () => {
+  price.placeholder = '1000';
+  sliderElement.noUiSlider.reset();
+};
 
 // Валидация въезд-выезд
 const timeIn = adForm.querySelector('#timein');
@@ -92,13 +127,13 @@ timeOut.addEventListener('change', () => {
   timeIn.value = timeOut.value;
 });
 
-
 const resetButton = adForm.querySelector('.ad-form__reset');
 
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   adForm.reset();
   resetMap();
+  resetSlider();
 });
 
 const successTemlate = document.querySelector('#success').content.querySelector('.success');
@@ -123,6 +158,7 @@ const sendFormSuccess = () => {
   document.addEventListener('keydown', onSuccessMessageKeydown);
   adForm.reset();
   resetMap();
+  resetSlider();
 };
 
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
