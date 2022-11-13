@@ -19,6 +19,14 @@ const showAlert = (message, timer) => {
   }, timer);
 };
 
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
 const getRoomsName = (rooms) => {
   switch (rooms) {
     case 1:
@@ -41,5 +49,4 @@ const getGuestsName = (guests) => {
   }
 };
 
-export {getRoomsName, getGuestsName, showAlert};
-
+export {getRoomsName, getGuestsName, showAlert, debounce};

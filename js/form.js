@@ -1,4 +1,5 @@
 import { requestData} from './data-base.js';
+import { mapFilters } from './filter.js';
 import { resetMap } from './map.js';
 
 const adForm = document.querySelector('.ad-form');
@@ -132,6 +133,7 @@ const resetButton = adForm.querySelector('.ad-form__reset');
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   adForm.reset();
+  mapFilters.reset();
   resetMap();
   resetSlider();
 });
@@ -157,6 +159,7 @@ const sendFormSuccess = () => {
   document.addEventListener('click', onSuccessMessageClick);
   document.addEventListener('keydown', onSuccessMessageKeydown);
   adForm.reset();
+  mapFilters.reset();
   resetMap();
   resetSlider();
 };
