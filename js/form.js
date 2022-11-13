@@ -1,3 +1,4 @@
+import { resetImages } from './images.js';
 import { requestData} from './data-base.js';
 import { mapFilters } from './filter.js';
 import { resetMap } from './map.js';
@@ -136,6 +137,7 @@ resetButton.addEventListener('click', (evt) => {
   mapFilters.reset();
   resetMap();
   resetSlider();
+  resetImages();
 });
 
 const successTemlate = document.querySelector('#success').content.querySelector('.success');
@@ -162,6 +164,7 @@ const sendFormSuccess = () => {
   mapFilters.reset();
   resetMap();
   resetSlider();
+  resetImages();
 };
 
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
