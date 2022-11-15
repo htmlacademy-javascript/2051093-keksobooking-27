@@ -9,18 +9,18 @@ const typeRules = {
 };
 
 const createCustomPopup = ({author,offer}) => {
-  const rentAdvertTemplate = document.querySelector('#card').content.querySelector('.popup');
-  const rentAdvertElement = rentAdvertTemplate.cloneNode(true);
+  const rentTemplate = document.querySelector('#card').content.querySelector('.popup');
+  const rentElement = rentTemplate.cloneNode(true);
 
-  rentAdvertElement.querySelector('.popup__avatar').src = author.avatar;
-  rentAdvertElement.querySelector('.popup__title').textContent = offer.title;
-  rentAdvertElement.querySelector('.popup__text--address').textContent = `Коордтнаты: ${offer.address}`;
-  rentAdvertElement.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
-  rentAdvertElement.querySelector('.popup__type').textContent = typeRules[offer.type];
-  rentAdvertElement.querySelector('.popup__text--capacity').textContent = `${offer.rooms} ${getRoomsName(offer.rooms)} для ${offer.guests} ${getGuestsName(offer.guests)}`;
-  rentAdvertElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
+  rentElement.querySelector('.popup__avatar').src = author.avatar;
+  rentElement.querySelector('.popup__title').textContent = offer.title;
+  rentElement.querySelector('.popup__text--address').textContent = `Коордтнаты: ${offer.address}`;
+  rentElement.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
+  rentElement.querySelector('.popup__type').textContent = typeRules[offer.type];
+  rentElement.querySelector('.popup__text--capacity').textContent = `${offer.rooms} ${getRoomsName(offer.rooms)} для ${offer.guests} ${getGuestsName(offer.guests)}`;
+  rentElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
 
-  const featuresContainer = rentAdvertElement.querySelector('.popup__features');
+  const featuresContainer = rentElement.querySelector('.popup__features');
   const featuresList = featuresContainer.querySelectorAll('.popup__feature');
   if (offer.features) {
     featuresList.forEach((featuresItem) => {
@@ -31,10 +31,10 @@ const createCustomPopup = ({author,offer}) => {
   } else {featuresContainer.remove();}
 
   if (offer.description) {
-    rentAdvertElement.querySelector('.popup__description').textContent = offer.description;
-  } else {rentAdvertElement.querySelector('.popup__description').remove();}
+    rentElement.querySelector('.popup__description').textContent = offer.description;
+  } else {rentElement.querySelector('.popup__description').remove();}
 
-  const photosContainer = rentAdvertElement.querySelector('.popup__photos');
+  const photosContainer = rentElement.querySelector('.popup__photos');
   const photoTemplate = photosContainer.querySelector('.popup__photo');
   if (offer.photos) {
     offer.photos.forEach((photo) => {
@@ -45,7 +45,7 @@ const createCustomPopup = ({author,offer}) => {
     photoTemplate.remove();
   } else {photosContainer.remove();}
 
-  return rentAdvertElement;
+  return rentElement;
 };
 
 export {createCustomPopup};

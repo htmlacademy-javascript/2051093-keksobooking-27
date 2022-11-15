@@ -1,22 +1,13 @@
-import {mapFilters, toggleActiveState} from './activate-page.js';
+import {toggleActiveState} from './activate-page.js';
 import {requestData} from './data-base.js';
+import {filterData, mapFilters} from './filter.js';
 import {address} from './form.js';
 import {createCustomPopup} from './popup.js';
-import { showAlert } from './util.js';
+import {showAlert, debounce} from './util.js';
 
 const MAP_ZOOM = 13;
 const LOCATION_DIGITS = 5;
 const ALERT_MESSAGE = 'Проблема доступа к серверу';
-
-const locationOfCenter = {
-  lat: 35.68950,
-  lng: 139.73171,
-};
-
-const locationOfMainMarker = {
-  lat: 35.68500,
-  lng: 139.72700,
-};
 
 const mainPinIcon = L.icon({
   iconUrl: './img/main-pin.svg',
@@ -30,11 +21,20 @@ const icon = L.icon({
   iconAnchor: [20, 40],
 });
 
-const map = L.map('map-canvas');
+const mapSettings = {
+  lat: 35.68950,
+  lng: 139.73171,
+};
 
-const markerGroup = L.layerGroup().addTo(map);
+const mainPinSettings = {
+  lat: 35.68500,
+  lng: 139.72700,
+};
 
 const MAX_ADVERTS = 10;
+const TIME_DELAY = 500;
+const map = L.map('map-canvas');
+const markerGroup = L.layerGroup().addTo(map);
 
 // Создаем слой с картой
 L.tileLayer(
@@ -46,13 +46,13 @@ L.tileLayer(
 
 // Добавляем метку
 const mainPinMarker = L.marker(
-  locationOfMainMarker,
+  mainPinSettings,
   {
     draggable: true,
     icon: mainPinIcon,
   },
 
-  address.value = `${locationOfMainMarker.lat} ${locationOfMainMarker.lng}`,
+  address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`,
 );
 
 mainPinMarker.addTo(map);
@@ -66,30 +66,40 @@ mainPinMarker.on('moveend', (evt) => {
   address.value = getMarkerLocation(evt.target.getLatLng());
 });
 
-const createMarkers = (rentAdverts) => {
-  rentAdverts.forEach((rentAdvert) => {
+const createMarker = (rentElements) => {
+  rentElements.forEach((rentElement) => {
     const marker = L.marker(
-      rentAdvert.location,
+      rentElement.location,
       {
         icon,
       },
     );
     marker
       .addTo(markerGroup)
-      .bindPopup(createCustomPopup(rentAdvert));
+      .bindPopup(createCustomPopup(rentElement));
   });
 };
 
 const resetMap = () => {
-  mainPinMarker.setLatLng(L.latLng(locationOfMainMarker.lat, locationOfMainMarker.lng));
-  address.value = `${locationOfMainMarker.lat} ${locationOfMainMarker.lng}`;
+  mainPinMarker.setLatLng(L.latLng(mainPinSettings.lat, mainPinSettings.lng));
+  address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`;
   map.closePopup();
 };
 
-const onSuccess = (data) => {
-  const rentAdverts = data.slice();
 
-  createMarkers(rentAdverts.slice(0, MAX_ADVERTS));
+let adverts = [];
+
+const onMapChange = debounce(() => {
+  markerGroup.clearLayers();
+  createMarker(filterData(adverts));
+}, TIME_DELAY);
+
+const onSuccess = (data) => {
+  adverts = data.slice();
+
+  createMarker(adverts.slice(0, MAX_ADVERTS));
+
+  mapFilters.addEventListener('change', onMapChange);
 };
 
 const onError = () => {
@@ -101,7 +111,7 @@ const onError = () => {
 map.on('load', () => {
   toggleActiveState();
   requestData(onSuccess, onError, 'GET');
-}).setView (locationOfCenter, MAP_ZOOM);
+}).setView (mapSettings, MAP_ZOOM);
 
 
-export {createMarkers, resetMap};
+export {resetMap};
