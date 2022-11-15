@@ -1,10 +1,13 @@
 import {resetImages} from './images.js';
 import {requestData} from './data-base.js';
+import {isEscapeKey} from './util.js';
 import {mapFilters} from './filter.js';
 import {resetMap} from './map.js';
 
 const MIN_LENGTH = 30;
 const MAX_LENGTH = 100;
+const PLACEHOLDER_DEFAULT = 1000;
+const SLIDER_STEP = 100;
 
 const adForm = document.querySelector('.ad-form');
 const address = adForm.querySelector('#address');
@@ -12,7 +15,7 @@ const guestField = adForm.querySelectorAll('#capacity option');
 const roomField = adForm.querySelector('#room_number');
 const price = adForm.querySelector('#price');
 const typeField = adForm.querySelector('#type');
-const sliderElement = document.querySelector('.ad-form__slider');
+const sliderElement = adForm.querySelector('.ad-form__slider');
 const timeIn = adForm.querySelector('#timein');
 const timeOut = adForm.querySelector('#timeout');
 
@@ -70,7 +73,7 @@ roomField.addEventListener('change', onRoomFieldChange);
 noUiSlider.create(sliderElement, {
   range: pricePerNight,
   start: price.placeholder,
-  step: 100,
+  step: SLIDER_STEP,
   connect: 'lower',
   format: {
     to: function (value) {
@@ -107,7 +110,7 @@ price.addEventListener('change', () => {
 });
 
 const resetSlider = () => {
-  price.placeholder = '1000';
+  price.placeholder = PLACEHOLDER_DEFAULT;
   sliderElement.noUiSlider.reset();
 };
 
@@ -145,8 +148,8 @@ const onSuccessMessageClick = () => {
   document.removeEventListener('click', onSuccessMessageClick);
 };
 
-const onSuccessMessageKeydown = (evt) => {
-  if (evt.key === 'Escape') {successMessage.remove();}
+const onSuccessMessageKeydown = () => {
+  if (isEscapeKey) {successMessage.remove();}
 
   document.removeEventListener('keydown', onSuccessMessageKeydown);
 };
@@ -168,8 +171,8 @@ const onErrorMessageClick = () => {
   document.removeEventListener('click', onErrorMessageClick);
 };
 
-const onErrorMessageKeydown = (evt) => {
-  if (evt.key === 'Escape') {errorMessage.remove();}
+const onErrorMessageKeydown = () => {
+  if (isEscapeKey) {errorMessage.remove();}
 
   document.removeEventListener('keydown', onErrorMessageKeydown);
 };

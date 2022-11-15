@@ -16,6 +16,4 @@ const toggleActiveState = () => {
   setDisabledState();
 };
 
-toggleActiveState();
-
 export {toggleActiveState};

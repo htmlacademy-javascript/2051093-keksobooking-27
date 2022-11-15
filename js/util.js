@@ -27,6 +27,8 @@ const debounce = (callback, timeoutDelay) => {
   };
 };
 
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
 const getRoomsName = (rooms) => {
   switch (rooms) {
     case 1:
@@ -49,4 +51,4 @@ const getGuestsName = (guests) => {
   }
 };
 
-export {getRoomsName, getGuestsName, showAlert, debounce};
+export {getRoomsName, getGuestsName, isEscapeKey, showAlert, debounce};
