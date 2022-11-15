@@ -1,6 +1,5 @@
-import { mapFilters } from './filter.js';
+import {mapFilters} from './filter.js';
 import {adForm} from './form.js';
-
 
 const disabledElements = document.querySelectorAll('select.map__filter', 'fieldset');
 
@@ -16,7 +15,5 @@ const toggleActiveState = () => {
 
   setDisabledState();
 };
-
-toggleActiveState();
 
 export {toggleActiveState};

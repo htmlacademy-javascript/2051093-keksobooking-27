@@ -1,35 +1,23 @@
-import { resetImages } from './images.js';
-import { requestData} from './data-base.js';
-import { mapFilters } from './filter.js';
-import { resetMap } from './map.js';
+import {resetImages} from './images.js';
+import {requestData} from './data-base.js';
+import {isEscapeKey} from './util.js';
+import {mapFilters} from './filter.js';
+import {resetMap} from './map.js';
+
+const MIN_LENGTH = 30;
+const MAX_LENGTH = 100;
+const PLACEHOLDER_DEFAULT = 1000;
+const SLIDER_STEP = 100;
 
 const adForm = document.querySelector('.ad-form');
-
-const pristine = new Pristine(adForm, {
-  classTo: 'ad-form__element',
-  errorClass: 'ad-form__element--invalid',
-  errorTextParent: 'ad-form__element',
-  errorTextTag: 'div',
-  errorTextClass: 'text-help',
-});
-
-//Валидация заголовка
-const minLength = 30;
-const maxLength = 100;
-const validateTitle = (value) => value.length >= minLength && value.length <= maxLength;
-
-pristine.addValidator(
-  adForm.querySelector('#title'),
-  validateTitle,
-  'от 30 до 100 символов'
-);
-
-// Адрес
 const address = adForm.querySelector('#address');
-
-// Валидация комнат и гостей
 const guestField = adForm.querySelectorAll('#capacity option');
 const roomField = adForm.querySelector('#room_number');
+const price = adForm.querySelector('#price');
+const typeField = adForm.querySelector('#type');
+const sliderElement = adForm.querySelector('.ad-form__slider');
+const timeIn = adForm.querySelector('#timein');
+const timeOut = adForm.querySelector('#timeout');
 
 const numberOfGuests = {
   1: ['1'],
@@ -37,28 +25,6 @@ const numberOfGuests = {
   3: ['1', '2', '3'],
   100: ['0'],
 };
-
-const validateRooms = () => {
-  const roomValue = roomField.value;
-
-  guestField.forEach((guest) => {
-    const isDidabled = (numberOfGuests[roomValue].indexOf(guest.value) === -1);
-    guest.selected = numberOfGuests[roomValue][0] === guest.value;
-    guest.disabled = isDidabled;
-    guest.hidden = isDidabled;
-  });
-};
-
-validateRooms();
-
-const onRoomFieldChange = () => validateRooms();
-
-roomField.addEventListener('change', onRoomFieldChange);
-
-// Валидация цены
-const price = adForm.querySelector('#price');
-const typeField = adForm.querySelector('#type');
-const sliderElement = document.querySelector('.ad-form__slider');
 
 const pricePerNight = {
   min: 0,
@@ -73,10 +39,41 @@ const priceMinRules = {
   hotel: 3000,
 };
 
+const pristine = new Pristine(adForm, {
+  classTo: 'ad-form__element',
+  errorClass: 'ad-form__element--invalid',
+  errorTextParent: 'ad-form__element',
+  errorTextTag: 'div',
+  errorTextClass: 'text-help',
+});
+
+const validateTitle = (value) => value.length >= MIN_LENGTH && value.length <= MAX_LENGTH;
+
+pristine.addValidator(
+  adForm.querySelector('#title'),
+  validateTitle,
+  'от 30 до 100 символов'
+);
+
+const validateRooms = () => {
+  const roomValue = roomField.value;
+
+  guestField.forEach((guest) => {
+    const isDidabled = (numberOfGuests[roomValue].indexOf(guest.value) === -1);
+    guest.selected = numberOfGuests[roomValue][0] === guest.value;
+    guest.disabled = isDidabled;
+    guest.hidden = isDidabled;
+  });
+};
+
+validateRooms();
+const onRoomFieldChange = () => validateRooms();
+roomField.addEventListener('change', onRoomFieldChange);
+
 noUiSlider.create(sliderElement, {
   range: pricePerNight,
   start: price.placeholder,
-  step: 100,
+  step: SLIDER_STEP,
   connect: 'lower',
   format: {
     to: function (value) {
@@ -113,13 +110,10 @@ price.addEventListener('change', () => {
 });
 
 const resetSlider = () => {
-  price.placeholder = '1000';
+  price.placeholder = PLACEHOLDER_DEFAULT;
   sliderElement.noUiSlider.reset();
 };
 
-// Валидация въезд-выезд
-const timeIn = adForm.querySelector('#timein');
-const timeOut = adForm.querySelector('#timeout');
 
 timeIn.addEventListener('change', () => {
   timeOut.value = timeIn.value;
@@ -129,7 +123,15 @@ timeOut.addEventListener('change', () => {
   timeIn.value = timeOut.value;
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 const resetButton = adForm.querySelector('.ad-form__reset');
+const successTemlate = document.querySelector('#success').content.querySelector('.success');
+const successMessage = successTemlate.cloneNode(true);
+const body = document.querySelector('body');
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorMessage = errorTemplate.cloneNode(true);
+
 
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
@@ -140,18 +142,14 @@ resetButton.addEventListener('click', (evt) => {
   resetImages();
 });
 
-const successTemlate = document.querySelector('#success').content.querySelector('.success');
-const successMessage = successTemlate.cloneNode(true);
-const body = document.querySelector('body');
-
 const onSuccessMessageClick = () => {
   successMessage.remove();
 
   document.removeEventListener('click', onSuccessMessageClick);
 };
 
-const onSuccessMessageKeydown = (evt) => {
-  if (evt.key === 'Escape') {successMessage.remove();}
+const onSuccessMessageKeydown = () => {
+  if (isEscapeKey) {successMessage.remove();}
 
   document.removeEventListener('keydown', onSuccessMessageKeydown);
 };
@@ -167,17 +165,14 @@ const sendFormSuccess = () => {
   resetImages();
 };
 
-const errorTemplate = document.querySelector('#error').content.querySelector('.error');
-const errorMessage = errorTemplate.cloneNode(true);
-
 const onErrorMessageClick = () => {
   errorMessage.remove();
 
   document.removeEventListener('click', onErrorMessageClick);
 };
 
-const onErrorMessageKeydown = (evt) => {
-  if (evt.key === 'Escape') {errorMessage.remove();}
+const onErrorMessageKeydown = () => {
+  if (isEscapeKey) {errorMessage.remove();}
 
   document.removeEventListener('keydown', onErrorMessageKeydown);
 };
