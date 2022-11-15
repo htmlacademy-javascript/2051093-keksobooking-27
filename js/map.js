@@ -8,6 +8,8 @@ import {showAlert, debounce} from './util.js';
 const MAP_ZOOM = 13;
 const LOCATION_DIGITS = 5;
 const ALERT_MESSAGE = 'Проблема доступа к серверу';
+const MAX_ADVERTS = 10;
+const TIME_DELAY = 500;
 
 const mainPinIcon = L.icon({
   iconUrl: './img/main-pin.svg',
@@ -31,8 +33,6 @@ const mainPinSettings = {
   lng: 139.72700,
 };
 
-const MAX_ADVERTS = 10;
-const TIME_DELAY = 500;
 const map = L.map('map-canvas');
 const markerGroup = L.layerGroup().addTo(map);
 
@@ -86,6 +86,7 @@ const resetMap = () => {
   map.closePopup();
 };
 
+///////////////////////////////////////////////////////////////////////////////
 
 let adverts = [];
 
@@ -107,7 +108,6 @@ const onError = () => {
   mapFilters.classList.toggle('map__filters--disabled');
 };
 
-// Задаем координаты карты
 map.on('load', () => {
   toggleActiveState();
   requestData(onSuccess, onError, 'GET');

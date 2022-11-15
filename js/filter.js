@@ -1,6 +1,8 @@
 const DEFAULT_VALUE = 'any';
-const mapFilters = document.querySelector('.map__filters');
 const MAX_ADVERTS = 10;
+
+const mapFilters = document.querySelector('.map__filters');
+const filters = Array.from(mapFilters.children);
 
 const priceRules = {
   'low': {
@@ -17,7 +19,6 @@ const priceRules = {
   },
 };
 
-const filters = Array.from(mapFilters.children);
 const filterRules = {
   'housing-type': (data, filter) => filter.value === data.offer.type,
   'housing-price': (data, filter) => data.offer.price >= priceRules[filter.value].min && data.offer.price < priceRules[filter.value].max,
@@ -25,7 +26,7 @@ const filterRules = {
   'housing-guests': (data, filter) => +filter.value === data.offer.guests,
   'housing-features': (data, filter) => {
     const checkedElements = Array.from(filter.querySelectorAll('input[type="checkbox"]:checked'));
-    return data.offer.features ? checkedElements.every((checkbox) => data.offer.features.includes(checkbox.value)) : true;
+    return data.offer.features ? checkedElements.every((checkbox) => data.offer.features.includes(checkbox.value)) : !(checkedElements.length > 0);
   }
 };
 
