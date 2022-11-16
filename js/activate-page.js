@@ -1,19 +1,28 @@
 import {mapFilters} from './filter.js';
 import {adForm} from './form.js';
 
-const disabledElements = document.querySelectorAll('select.map__filter', 'fieldset');
+const disabledFilters = mapFilters.querySelectorAll('select.map__filter');
+const disabledFieldsets = adForm.querySelectorAll('fieldset');
 
-const setDisabledState = () => {
-  disabledElements.forEach((item) => {
+const setDisabledState = (items) => {
+  items.forEach((item) => {
     item.disabled = !item.disabled;
   });
 };
 
-const toggleActiveState = () => {
-  adForm.classList.toggle('ad-form--disabled');
+const setFilterState = () => {
   mapFilters.classList.toggle('map__filters--disabled');
-
-  setDisabledState();
+  setDisabledState(disabledFilters);
 };
 
-export {toggleActiveState};
+const setFormState = () => {
+  adForm.classList.toggle('ad-form--disabled');
+  setDisabledState(disabledFieldsets);
+};
+
+const toggleActiveState = () => {
+  setFilterState();
+  setFormState();
+};
+
+export {toggleActiveState, setFilterState, setFormState};

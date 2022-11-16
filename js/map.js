@@ -1,4 +1,4 @@
-import {toggleActiveState} from './activate-page.js';
+import {setFilterState, setFormState} from './activate-page.js';
 import {requestData} from './data-base.js';
 import {filterData, mapFilters} from './filter.js';
 import {address} from './form.js';
@@ -98,19 +98,17 @@ const onMapChange = debounce(() => {
 
 const onSuccess = (data) => {
   adverts = data.slice();
-
   createMarker(adverts.slice(0, MAX_ADVERTS));
-
+  setFilterState();
   mapFilters.addEventListener('change', onMapChange);
 };
 
 const onError = () => {
   showAlert(ALERT_MESSAGE, ALERT_TIME);
-  mapFilters.classList.toggle('map__filters--disabled');
 };
 
 map.on('load', () => {
-  toggleActiveState();
+  setFormState();
   requestData(onSuccess, onError, 'GET');
 }).setView (mapSettings, MAP_ZOOM);
 
