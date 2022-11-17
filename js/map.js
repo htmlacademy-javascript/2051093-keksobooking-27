@@ -1,4 +1,4 @@
-import {setFilterState, setFormState} from './activate-page.js';
+import {switchFilterState, switchFormState} from './activate-page.js';
 import {requestData} from './data-base.js';
 import {filterData, mapFilters} from './filter.js';
 import {address} from './form.js';
@@ -37,7 +37,6 @@ const mainPinSettings = {
 const map = L.map('map-canvas');
 const markerGroup = L.layerGroup().addTo(map);
 
-// Создаем слой с картой
 L.tileLayer(
   'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   {
@@ -45,29 +44,27 @@ L.tileLayer(
   },
 ).addTo(map);
 
-// Добавляем метку
 const mainPinMarker = L.marker(
   mainPinSettings,
   {
     draggable: true,
     icon: mainPinIcon,
   },
-
-  address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`,
 );
 
 mainPinMarker.addTo(map);
+address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`;
 
-const getMarkerLocation = (location) => {
+const getLocationSettings = (location) => {
   const {lat, lng} = location;
   return `${lat.toFixed(LOCATION_DIGITS)} ${lng.toFixed(LOCATION_DIGITS)}`;
 };
 
 mainPinMarker.on('moveend', (evt) => {
-  address.value = getMarkerLocation(evt.target.getLatLng());
+  address.value = getLocationSettings(evt.target.getLatLng());
 });
 
-const createMarker = (rentElements) => {
+const renderMarker = (rentElements) => {
   rentElements.forEach((rentElement) => {
     const marker = L.marker(
       rentElement.location,
@@ -81,25 +78,19 @@ const createMarker = (rentElements) => {
   });
 };
 
-const resetMap = () => {
-  mainPinMarker.setLatLng(L.latLng(mainPinSettings.lat, mainPinSettings.lng));
-  address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`;
-  map.closePopup();
-};
-
 ///////////////////////////////////////////////////////////////////////////////
 
 let adverts = [];
 
 const onMapChange = debounce(() => {
   markerGroup.clearLayers();
-  createMarker(filterData(adverts));
+  renderMarker(filterData(adverts));
 }, TIME_DELAY);
 
 const onSuccess = (data) => {
   adverts = data.slice();
-  createMarker(adverts.slice(0, MAX_ADVERTS));
-  setFilterState();
+  renderMarker(adverts.slice(0, MAX_ADVERTS));
+  switchFilterState();
   mapFilters.addEventListener('change', onMapChange);
 };
 
@@ -108,9 +99,17 @@ const onError = () => {
 };
 
 map.on('load', () => {
-  setFormState();
+  switchFormState();
   requestData(onSuccess, onError, 'GET');
 }).setView (mapSettings, MAP_ZOOM);
+
+const resetMap = () => {
+  mainPinMarker.setLatLng(L.latLng(mainPinSettings.lat, mainPinSettings.lng));
+  address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`;
+  map.closePopup();
+  markerGroup.clearLayers();
+  renderMarker(adverts.slice(0, MAX_ADVERTS));
+};
 
 
 export {resetMap};

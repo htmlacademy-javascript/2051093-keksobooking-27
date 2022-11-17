@@ -48,14 +48,15 @@ const pristine = new Pristine(adForm, {
 });
 
 const validateTitle = (value) => value.length >= MIN_LENGTH && value.length <= MAX_LENGTH;
+const getTitleErrorMessage = () => `от ${MIN_LENGTH} до ${MAX_LENGTH} символов`;
 
 pristine.addValidator(
   adForm.querySelector('#title'),
   validateTitle,
-  'от 30 до 100 символов'
+  getTitleErrorMessage,
 );
 
-const validateRooms = () => {
+const changeRoomVariants = () => {
   const roomValue = roomField.value;
 
   guestField.forEach((guest) => {
@@ -66,8 +67,8 @@ const validateRooms = () => {
   });
 };
 
-validateRooms();
-const onRoomFieldChange = () => validateRooms();
+changeRoomVariants();
+const onRoomFieldChange = () => changeRoomVariants();
 roomField.addEventListener('change', onRoomFieldChange);
 
 noUiSlider.create(sliderElement, {
@@ -142,22 +143,24 @@ resetButton.addEventListener('click', (evt) => {
   resetImages();
 });
 
-const onSuccessMessageClick = () => {
+const onDocumentClick = () => {
   successMessage.remove();
-
-  document.removeEventListener('click', onSuccessMessageClick);
+  errorMessage.remove();
+  document.removeEventListener('click', onDocumentClick);
 };
 
-const onSuccessMessageKeydown = () => {
-  if (isEscapeKey) {successMessage.remove();}
-
-  document.removeEventListener('keydown', onSuccessMessageKeydown);
+const onDocumentKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
+    successMessage.remove();
+    errorMessage.remove();
+  }
+  document.removeEventListener('keydown', onDocumentKeydown);
 };
 
 const sendFormSuccess = () => {
   body.appendChild(successMessage);
-  document.addEventListener('click', onSuccessMessageClick);
-  document.addEventListener('keydown', onSuccessMessageKeydown);
+  document.addEventListener('click', onDocumentClick);
+  document.addEventListener('keydown', onDocumentKeydown);
   adForm.reset();
   mapFilters.reset();
   resetMap();
@@ -165,29 +168,17 @@ const sendFormSuccess = () => {
   resetImages();
 };
 
-const onErrorMessageClick = () => {
-  errorMessage.remove();
-
-  document.removeEventListener('click', onErrorMessageClick);
-};
-
-const onErrorMessageKeydown = () => {
-  if (isEscapeKey) {errorMessage.remove();}
-
-  document.removeEventListener('keydown', onErrorMessageKeydown);
-};
-
-const sendFormError = () => {
+const showFormError = () => {
   body.appendChild(errorMessage);
-  document.addEventListener('click', onErrorMessageClick);
-  document.addEventListener('keydown', onErrorMessageKeydown);
+  document.addEventListener('click', onDocumentClick);
+  document.addEventListener('keydown', onDocumentKeydown);
 };
 
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
     const formData = new FormData(evt.target);
-    requestData(sendFormSuccess, sendFormError, 'POST',formData);
+    requestData(sendFormSuccess, showFormError, 'POST',formData);
   }
 });
 

@@ -1,19 +1,6 @@
 import {getRoomsName, getGuestsName} from './util.js';
 
 const rentTemplate = document.querySelector('#card').content.querySelector('.popup');
-const rentElement = rentTemplate.cloneNode(true);
-const avatar = rentElement.querySelector('.popup__avatar');
-const title = rentElement.querySelector('.popup__title');
-const address = rentElement.querySelector('.popup__text--address');
-const price = rentElement.querySelector('.popup__text--price');
-const type = rentElement.querySelector('.popup__type');
-const capacity = rentElement.querySelector('.popup__text--capacity');
-const time = rentElement.querySelector('.popup__text--time');
-const featuresContainer = rentElement.querySelector('.popup__features');
-const featuresList = featuresContainer.querySelectorAll('.popup__feature');
-const description = rentElement.querySelector('.popup__description');
-const photosContainer = rentElement.querySelector('.popup__photos');
-const photoTemplate = photosContainer.querySelector('.popup__photo');
 
 const typeRules = {
   'flat': 'Квартира',
@@ -23,7 +10,22 @@ const typeRules = {
   'hotel': 'Отель',
 };
 
-function createCustomPopup({ author, offer }) {
+const createCustomPopup = ({ author, offer }) => {
+
+  const rentElement = rentTemplate.cloneNode(true);
+  const avatar = rentElement.querySelector('.popup__avatar');
+  const title = rentElement.querySelector('.popup__title');
+  const address = rentElement.querySelector('.popup__text--address');
+  const price = rentElement.querySelector('.popup__text--price');
+  const type = rentElement.querySelector('.popup__type');
+  const capacity = rentElement.querySelector('.popup__text--capacity');
+  const time = rentElement.querySelector('.popup__text--time');
+  const featuresContainer = rentElement.querySelector('.popup__features');
+  const featuresList = featuresContainer.querySelectorAll('.popup__feature');
+  const description = rentElement.querySelector('.popup__description');
+  const photosContainer = rentElement.querySelector('.popup__photos');
+  const photoTemplate = photosContainer.querySelector('.popup__photo');
+
   if (author.avatar) {
     avatar.src = author.avatar;
   } else {
@@ -94,6 +96,6 @@ function createCustomPopup({ author, offer }) {
   }
 
   return rentElement;
-}
+};
 
 export {createCustomPopup};
