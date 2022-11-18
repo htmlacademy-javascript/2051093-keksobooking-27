@@ -1,4 +1,4 @@
-import {switchFilterState, switchFormState} from './activate-page.js';
+import {toggleFilterState, toggleFormState} from './activate-page.js';
 import {requestData} from './data-base.js';
 import {filterData, mapFilters} from './filter.js';
 import {address} from './form.js';
@@ -55,13 +55,13 @@ const mainPinMarker = L.marker(
 mainPinMarker.addTo(map);
 address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`;
 
-const getLocationSettings = (location) => {
+const formatLocation = (location) => {
   const {lat, lng} = location;
   return `${lat.toFixed(LOCATION_DIGITS)} ${lng.toFixed(LOCATION_DIGITS)}`;
 };
 
 mainPinMarker.on('moveend', (evt) => {
-  address.value = getLocationSettings(evt.target.getLatLng());
+  address.value = formatLocation(evt.target.getLatLng());
 });
 
 const renderMarker = (rentElements) => {
@@ -90,7 +90,7 @@ const onMapChange = debounce(() => {
 const onSuccess = (data) => {
   adverts = data.slice();
   renderMarker(adverts.slice(0, MAX_ADVERTS));
-  switchFilterState();
+  toggleFilterState();
   mapFilters.addEventListener('change', onMapChange);
 };
 
@@ -99,17 +99,16 @@ const onError = () => {
 };
 
 map.on('load', () => {
-  switchFormState();
+  toggleFormState();
   requestData(onSuccess, onError, 'GET');
 }).setView (mapSettings, MAP_ZOOM);
 
 const resetMap = () => {
+  markerGroup.clearLayers();
+  map.setView(mapSettings, MAP_ZOOM);
   mainPinMarker.setLatLng(L.latLng(mainPinSettings.lat, mainPinSettings.lng));
   address.value = `${mainPinSettings.lat} ${mainPinSettings.lng}`;
-  map.closePopup();
-  markerGroup.clearLayers();
   renderMarker(adverts.slice(0, MAX_ADVERTS));
 };
-
 
 export {resetMap};
