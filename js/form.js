@@ -157,7 +157,7 @@ const onDocumentKeydown = (evt) => {
   document.removeEventListener('keydown', onDocumentKeydown);
 };
 
-const sendFormSuccess = () => {
+const showFormSuccess = () => {
   body.appendChild(successMessage);
   document.addEventListener('click', onDocumentClick);
   document.addEventListener('keydown', onDocumentKeydown);
@@ -178,7 +178,7 @@ adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   if (pristine.validate()) {
     const formData = new FormData(evt.target);
-    requestData(sendFormSuccess, showFormError, 'POST',formData);
+    requestData(showFormSuccess, showFormError, 'POST',formData);
   }
 });
 
